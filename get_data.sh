@@ -107,7 +107,7 @@ echo "---------------------------------------------------------------------" >> 
 echo >> $logfile
 
 echo "Running Speed test:" >> $logfile
-speedtest-cli >> $logfile
+/usr/local/bin/speedtest-cli >> $logfile
 
 
 
