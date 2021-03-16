@@ -7,6 +7,8 @@
 #       - Removed the traceroute test.
 #       - Added DNS server ping test.
 #       - Added DNS lookup test.
+#       - Added MacOS Version
+#       - Added Uptime
 
 user=$(who | grep "console" | awk  '{print $1}')
 today=$(date)
@@ -14,18 +16,17 @@ today=$(date)
 hname=$(scutil --get HostName)
 lhname=$(scutil --get LocalHostName)
 cname=$(scutil --get ComputerName)
+macosver=$(sw_vers -productVersion)
+up=$(uptime | awk -F'( |,|:)+' '{print $4,$5",",$6,"hours,",$7,"minutes."}')
 
 
 logfile=/Users/$user/Desktop/NetworkInfo.txt
 
-
-
-
-
 echo "---------------------------------------------------------------------" >> $logfile
-
 echo $today >> $logfile
 echo >> $logfile
+echo "MacOS Version:     " $macosver >> $logfile
+echo "Computer uptime:   " $up >> $logfile
 echo "Logged in user is: " $user >> $logfile
 echo "Hostname is:       " $hname >> $logfile
 echo "Local Hostname is: " $lhname >> $logfile
@@ -126,4 +127,3 @@ echo "Speed test results:" >> $logfile
 
 echo >> $logfile
 echo >> $logfile
-
