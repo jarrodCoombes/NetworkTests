@@ -1,24 +1,58 @@
 #!/bin/bash
+# Collects some metrics and information about the system for the end user to send to us in a ticket.
+# Version 1.0 by Jarrod Coombes
+#       - Initial Implimentation
+# Version 1.0.1
+#       - Reworked the script for an easier to read log file
+#       - Removed the traceroute test.
+#       - Added DNS server ping test.
+#       - Added DNS lookup test.
 
 user=$(who | grep "console" | awk  '{print $1}')
+today=$(date)
+
+hname=$(scutil --get HostName)
+lhname=$(scutil --get LocalHostName)
+cname=$(scutil --get ComputerName)
 
 
 logfile=/Users/$user/Desktop/NetworkInfo.txt
 
-today=$(date)
 
-echo $today " - Getting Network Data:" >> $logfile
 
-echo >> $logfile
+
+
 echo "---------------------------------------------------------------------" >> $logfile
-echo >> $logfile
 
+echo $today >> $logfile
+echo >> $logfile
 echo "Logged in user is: " $user >> $logfile
+echo "Hostname is:       " $hname >> $logfile
+echo "Local Hostname is: " $lhname >> $logfile
+echo "Computer name is:  " $cname >> $logfile
 
 echo >> $logfile
-echo "---------------------------------------------------------------------" >> $logfile
-echo >> $logfile
 
+echo "CPU Usage over 10 seconds, taken at 2 second intervals: " >> $logfile
+cpuuse=$(top -l 1 | grep -E "^CPU")
+echo $cpuuse >> $logfile
+sleep 2
+cpuuse=$(top -l 1 | grep -E "^CPU")
+echo $cpuuse >> $logfile
+sleep 2
+cpuuse=$(top -l 1 | grep -E "^CPU")
+echo $cpuuse >> $logfile
+sleep 2
+cpuuse=$(top -l 1 | grep -E "^CPU")
+echo $cpuuse >> $logfile
+sleep 2
+cpuuse=$(top -l 1 | grep -E "^CPU")
+echo $cpuuse >> $logfile
+sleep 2
+cpuuse=$(top -l 1 | grep -E "^CPU")
+echo $cpuuse >> $logfile
+
+echo >> $logfile
 
 echo "Connected network Devices and info: " >> $logfile
 
@@ -46,73 +80,50 @@ if [ -z "$currentservice" ]; then
     >&2 echo "Could not find current service" >> $logfile
     exit 1
 fi
-
-echo >> $logfile
-echo "---------------------------------------------------------------------" >> $logfile
 echo >> $logfile
 
 echo "Wireless Information:" >> $logfile
 /System/Library/PrivateFrameworks/Apple80211.framework/Versions/A/Resources/airport -I >> $logfile
 
 echo >> $logfile
-echo "---------------------------------------------------------------------" >> $logfile
-echo >> $logfile
+
+echo >> "Network Test Results:" >> $logfile
 
 gw=$(route get 8.8.8.8 | grep gateway | awk '{print $2}')
-echo "Pinging the Gateway ("$gw"):" >> $logfile
+echo "Ping response from the Gateway ("$gw"):" >> $logfile
+echo >> $logfile
 ping -c 10 $gw >> $logfile
 
 echo >> $logfile
-echo "---------------------------------------------------------------------" >> $logfile
+
+dns=$(scutil --dns | grep 'nameserver\[[0]*\]' | awk '{print $3; exit}')
+echo "Ping response from the DNS server ("$dns"):" >> $logfile
+echo >> $logfile
+ping -c 10 $dns >> $logfile
+
 echo >> $logfile
 
-echo "Pinging Google.com:" >> $logfile
+echo "Ping response from Google.com:" >> $logfile
 echo >> $logfile
 ping -c 10 google.com >> $logfile
 
 echo >> $logfile
-echo "---------------------------------------------------------------------" >> $logfile
-echo >> $logfile
 
-echo "Running a trace to Google.com:" >> $logfile
+echo "Name resolution test results" >> $logfile
 echo >> $logfile
-traceroute google.com >> $logfile
-
+echo "For mpcsd.org:" >> $logfile
+nslookup mpcsd.org >> $logfile
 echo >> $logfile
-echo "---------------------------------------------------------------------" >> $logfile
-echo >> $logfile
-
-echo "CPU Usage Info: " >> $logfile
-cpuuse=$(top -l 1 | grep -E "^CPU")
-echo $cpuuse >> $logfile
-sleep 2
-cpuuse=$(top -l 1 | grep -E "^CPU")
-echo $cpuuse >> $logfile
-sleep 2
-cpuuse=$(top -l 1 | grep -E "^CPU")
-echo $cpuuse >> $logfile
-sleep 2
-cpuuse=$(top -l 1 | grep -E "^CPU")
-echo $cpuuse >> $logfile
-sleep 2
-cpuuse=$(top -l 1 | grep -E "^CPU")
-echo $cpuuse >> $logfile
-sleep 2
-cpuuse=$(top -l 1 | grep -E "^CPU")
-echo $cpuuse >> $logfile
-
+echo "For apple.com:" >> $logfile
+nslookup apple.com >> $logfile
 
 echo >> $logfile
-echo "---------------------------------------------------------------------" >> $logfile
-echo >> $logfile
 
-echo "Running Speed test:" >> $logfile
+
+echo "Speed test results:" >> $logfile
 /usr/local/bin/speedtest-cli >> $logfile
 
 
-
-
 echo >> $logfile
-echo "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++" >> $logfile
 echo >> $logfile
 
