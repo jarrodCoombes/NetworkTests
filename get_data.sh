@@ -17,7 +17,7 @@ hname=$(scutil --get HostName)
 lhname=$(scutil --get LocalHostName)
 cname=$(scutil --get ComputerName)
 macosver=$(sw_vers -productVersion)
-up=$(uptime | awk -F'( |,|:)+' '{print $4,$5",",$6,"hours,",$7,"minutes."}')
+up=$(uptime | awk -F'( |,|:)+' '{d=h=m=0; if ($5=="min") m=$4; else {if ($5~/^day/) {d=$4;h=$6;m=$7} else {h=$4;m=$5}}} {print d+0,"days,",h+0,"hours,",m+0,"minutes."}')
 
 
 logfile=/Users/$user/Desktop/NetworkInfo.txt
