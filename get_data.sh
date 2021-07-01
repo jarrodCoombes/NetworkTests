@@ -9,6 +9,10 @@
 #       - Added DNS lookup test.
 #       - Added MacOS Version
 #       - Added Uptime
+#
+# Planned Additions/Changes
+#       - Get the output to be autosubmitted via email and/or ticket.
+
 
 user=$(who | grep "console" | awk  '{print $1}')
 today=$(date)
